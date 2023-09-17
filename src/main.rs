@@ -24,30 +24,27 @@ impl From<&str> for Greeting {
     }
 }
 
-// We can write generic code now, if we wanted too.
-// reads "foo takes a str, and returns some type T which implements From<&str>"
-// The 'a business says that the *lifetime* of &str that From takes, is tied
-// to the lifetime of *f*. That is, the memory that the T converts from lives
-// as long as the memory `f` refers too.
-fn from_str<'a, T: From<&'a str>>(f: &'a str) -> T {
-    T::from(f)
-}
-
-
-fn greet_entity(Greeting(mut greeting): Greeting, entity: Entity) -> String {
-    // you can pattern match on enums too! Handle the different
-    // things an enum can be, and take the data out.
-    match entity {
-        Entity::User(u) => greeting.push_str(&u),
-        Entity::Group(g) => {
-            greeting.push_str(" everyone from ");
-            greeting.push_str(&g);
+fn build_greeter(Greeting(s): Greeting) -> impl Fn(&Entity) -> String {
+    // we take a greeter, and return a *closure* (or unnamed function).
+    // other languages call this a lambda. This lambda takes control of the
+    // memory that it "captures" (or refers too), hence the `move`. This way
+    // we don't have to worry about the closure referring to some outside memory,
+    // and having to tie the lifetime of the closure to something.
+    move |entity| {
+        let mut s = s.clone();
+        match entity {
+            Entity::User(u) => s.push_str(&u),
+            Entity::Group(g) => {
+                s.push_str(" everyone from ");
+                s.push_str(&g);
+            }
         }
+        s
     }
-    greeting
 }
 
 fn main() {
-    let greeting = greet_entity(from_str("Hello "), Entity::Group(String::from("Lobotomy corporation")));
+    let greeter = build_greeter(Greeting::from("Hello "));
+    let greeting = greeter(&Entity::Group(String::from("Lobotomy corporation")));
     println!("{greeting}!");
 }
