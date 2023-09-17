@@ -1,19 +1,26 @@
-// structs hold data, they're sort of like classes in Java.
-// this is known as a tuple struct, so it doesn't have it's fields named.
-// you can have structs with it's properties being named too - but we'll
-// avoid that.
+// Enums are a way to say "or". An entity is a User *or* a Group.
+// unlike other languages, enums in rust can hold data.
+enum Entity {
+    User(String),
+    Group(String),
+}
+
 struct Greeting(String);
 
-// When we're declaring a variable *anywhere*, we can use what we call
-// "pattern matching", to destructure the value. What is used to construct
-// it on the right side, is used to destruct it on the left side.
-// Here, greeting is just the inner string the `Greeting` type holds.
-fn greet_john(Greeting(mut greeting): Greeting) -> String {
-    greeting.push_str(" John");
+fn greet_entity(Greeting(mut greeting): Greeting, entity: Entity) -> String {
+    // you can pattern match on enums too! Handle the different
+    // things an enum can be, and take the data out.
+    match entity {
+        Entity::User(u) => greeting.push_str(&u),
+        Entity::Group(g) => {
+            greeting.push_str(" everyone from ");
+            greeting.push_str(&g);
+        }
+    }
     greeting
 }
 
 fn main() {
-    let greeting = greet_john(Greeting(String::from("Hello")));
+    let greeting = greet_entity(Greeting(String::from("Hello")), Entity::Group(String::from("Lobotomy corporation")));
     println!("{greeting}!");
 }
