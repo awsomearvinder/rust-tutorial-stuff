@@ -1,17 +1,16 @@
-fn greet_john(mut greeting: String) -> String {
-    // if we take in an *owned* copy of the string
-    // (see how there's no reference? We're giving control
-    // of the memory to the function), we can modify the memory
-    // and return the same copy back.
-    greeting.push_str(" John");
-    greeting
+// structs hold data, they're sort of like classes in Java.
+// this is known as a tuple struct, so it doesn't have it's fields named.
+// you can have structs with it's properties being named too - but we'll
+// avoid that.
+struct Greeting(String);
+
+fn greet_john(mut greeting: Greeting) -> String {
+    //Take a greeting, and return a string.
+    greeting.0.push_str(" John");
+    greeting.0
 }
 
 fn main() {
-    // Strings are owned types. They allocate memory from the OS.
-    // By passing control of the memory or a *mutable*
-    // reference, we can modify it without having to allocate another
-    // one.
-    let greeting = greet_john(String::from("Hello"));
+    let greeting = greet_john(Greeting(String::from("Hello")));
     println!("{greeting}!");
 }
