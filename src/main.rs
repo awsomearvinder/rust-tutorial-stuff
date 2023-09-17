@@ -1,14 +1,17 @@
-fn say_hello(u: &str) {
-    // we now take in a reference to a string, or a "string slice"
-    // rather then a string itself. This is a pointer, and by
-    // using this, we don't have to copy data around (or move it).
-    println!("Hello, {u}!");
+fn greet_john(mut greeting: String) -> String {
+    // if we take in an *owned* copy of the string
+    // (see how there's no reference? We're giving control
+    // of the memory to the function), we can modify the memory
+    // and return the same copy back.
+    greeting.push_str(" John");
+    greeting
 }
 
 fn main() {
-    // string literals are by default a reference. This is because
-    // instead of *allocating* memory, they're just pointers to the
-    // relevant section in the binary in memory. (It's the same
-    // reason string literals are a char* or `string_view` in C++).
-    say_hello("john");
+    // Strings are owned types. They allocate memory from the OS.
+    // By passing control of the memory or a *mutable*
+    // reference, we can modify it without having to allocate another
+    // one.
+    let greeting = greet_john(String::from("Hello"));
+    println!("{greeting}!");
 }
