@@ -4,10 +4,13 @@
 // avoid that.
 struct Greeting(String);
 
-fn greet_john(mut greeting: Greeting) -> String {
-    //Take a greeting, and return a string.
-    greeting.0.push_str(" John");
-    greeting.0
+// When we're declaring a variable *anywhere*, we can use what we call
+// "pattern matching", to destructure the value. What is used to construct
+// it on the right side, is used to destruct it on the left side.
+// Here, greeting is just the inner string the `Greeting` type holds.
+fn greet_john(Greeting(mut greeting): Greeting) -> String {
+    greeting.push_str(" John");
+    greeting
 }
 
 fn main() {
